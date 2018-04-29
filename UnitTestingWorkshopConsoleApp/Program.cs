@@ -32,10 +32,10 @@ namespace UnitTestingWorkshopConsoleApp
 
             var generatedHours = _fullHoursGenerator.GetAllPossibleHours(digits);
 
-            var explorationHelper = generatedHours.ParseHoursCollection();
+            // var explorationHelper = generatedHours.ParseHoursCollection();
 
-            Console.WriteLine(explorationHelper);
-            Console.Read();
+            // Console.WriteLine(explorationHelper);
+            // Console.Read();
 
             var result = _hourProcessor.Process(generatedHours);
 
