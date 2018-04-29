@@ -8,10 +8,21 @@ namespace UnitTestingWorkshopConsoleAppTests.Extensions
 {
     public class TimeNoModelExtensionsTests
     {
-        [Fact]
-        public void ToDoubleDigitString_ParseHoursToStringFormat_Success()
+        [Theory]
+        [InlineData("06", new int[] { 0, 6 })]
+        [InlineData("00", new int[] { 0, 0 })]
+        [InlineData("12", new int[] { 1, 2 })]
+        [InlineData("23", new int[] { 2, 3 })]
+        public void ToDoubleDigitString_ParseHoursToStringFormat_Success(string expectedResult, int[] testNoData)
         {
-            Assert.False(true);
+            //Arrange
+            var testNo = new TimeNoModel { first = testNoData[0], second = testNoData[1] };
+
+            //Act
+            var testResult = testNo.ToDoubleDigitString();
+
+            //Assert
+            testResult.Should().Be(expectedResult);
         }
     }
 }
