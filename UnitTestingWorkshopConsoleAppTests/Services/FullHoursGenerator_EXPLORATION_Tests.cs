@@ -9,7 +9,13 @@ namespace UnitTestingWorkshopConsoleAppTests.Services
 {
     public class FullHoursGenerator_EXPLORATION_Tests
     {
-        private readonly FullHoursGenerator _hoursGenerator = new FullHoursGenerator();
+        private readonly FullHoursGenerator _hoursGenerator = null;
+
+        public FullHoursGenerator_EXPLORATION_Tests()
+        {
+            HourPartialsGenerator partialsGenerator = new HourPartialsGenerator();
+            _hoursGenerator = new FullHoursGenerator(partialsGenerator);
+        }
         
         [Theory]
         [InlineData(new int[] { 1, 8, 3, 2, 6, 4 }, new string[] { "18:34:26", "18:23:46", "18:32:46", "18:36:24", "18:36:42", "18:26:34", "18:26:43", "18:24:36", "18:43:26", "18:42:36", "18:46:32", "18:46:23", "13:28:46", "13:26:48", "13:48:26", "13:46:28", "12:38:46", "12:36:48", "12:48:36", "12:46:38", "16:38:24", "16:38:42", "16:32:48", "16:34:28", "16:28:34", "16:28:43", "16:23:48", "16:24:38", "16:48:32", "16:48:23", "16:43:28", "16:42:38", "14:38:26", "14:36:28", "14:28:36", "14:26:38", "21:38:46", "21:36:48", "21:48:36", "21:46:38", "23:18:46", "23:16:48", "23:48:16", "23:46:18", "24:18:36", "24:16:38", "24:38:16", "24:36:18" })]
@@ -23,7 +29,7 @@ namespace UnitTestingWorkshopConsoleAppTests.Services
         {
             //Act
             var result = _hoursGenerator.GetAllPossibleHours(digits.ToList());
-
+            
             //Assert
             result.Select(h => h.To24HourFormatString())
                 .Should()
