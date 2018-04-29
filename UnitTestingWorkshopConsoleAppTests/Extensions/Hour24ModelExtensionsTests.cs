@@ -27,11 +27,12 @@ namespace UnitTestingWorkshopConsoleAppTests.Extensions
 
             testResult.Should().Be(expectedResult);
         }
-        
+
         [Theory]
         [InlineData(new int[] { 1, 8, 3, 2, 4, 6, 2, 3, 2, 3, 4, 6 }, "new string[] {\"18:32:46\", \"23:23:46\"}")]
         public void ParseHoursCollection_PassingStandardHour_SuccessfullGeneratedArray(int[] inputData, string expectedResult)
         {
+            //Arrange
             var testModel1 = new Hour24Model
             {
                 hour = new TimeNoModel { first = inputData[0], second = inputData[1] },
@@ -46,8 +47,10 @@ namespace UnitTestingWorkshopConsoleAppTests.Extensions
                 seconds = new TimeNoModel { first = inputData[10], second = inputData[11] }
             };
 
+            //Act
             var testResult = (new List<Hour24Model> { testModel1, testModel2 }).ParseHoursCollection();
 
+            //Assert
             testResult.Should().Be(expectedResult);
         }
     }

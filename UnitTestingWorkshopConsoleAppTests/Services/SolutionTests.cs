@@ -20,7 +20,7 @@ namespace UnitTestingWorkshopConsoleAppTests.Services
         {
             _solutionImpl = new Solution(_hourProcessor.Object, _hourGenerator.Object);
         }
-
+        
         [Fact]
         public void Solution_PassingSomeDigits_FlowIsCorrect()
         {

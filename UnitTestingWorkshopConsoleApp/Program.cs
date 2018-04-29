@@ -5,6 +5,7 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using Newtonsoft.Json;
+using UnitTestingWorkshopConsoleApp.Extensions;
 using UnitTestingWorkshopConsoleApp.Services;
 using UnitTestingWorkshopConsoleApp.Services.Interfaces;
 
@@ -30,6 +31,12 @@ namespace UnitTestingWorkshopConsoleApp
             digits.Add(F);
 
             var generatedHours = _fullHoursGenerator.GetAllPossibleHours(digits);
+
+            var explorationHelper = generatedHours.ParseHoursCollection();
+
+            Console.WriteLine(explorationHelper);
+            Console.Read();
+
             var result = _hourProcessor.Process(generatedHours);
 
             return result;
