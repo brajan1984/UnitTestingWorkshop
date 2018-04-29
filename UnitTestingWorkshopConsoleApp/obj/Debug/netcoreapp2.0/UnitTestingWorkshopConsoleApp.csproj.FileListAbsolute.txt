@@ -8,3 +8,4 @@ W:\private_projects\UnitTestingWorkshop\UnitTestingWorkshopConsoleApp\obj\Debug\
 W:\private_projects\UnitTestingWorkshop\UnitTestingWorkshopConsoleApp\obj\Debug\netcoreapp2.0\UnitTestingWorkshopConsoleApp.AssemblyInfo.cs
 W:\private_projects\UnitTestingWorkshop\UnitTestingWorkshopConsoleApp\obj\Debug\netcoreapp2.0\UnitTestingWorkshopConsoleApp.dll
 W:\private_projects\UnitTestingWorkshop\UnitTestingWorkshopConsoleApp\obj\Debug\netcoreapp2.0\UnitTestingWorkshopConsoleApp.pdb
+W:\private_projects\UnitTestingWorkshop\UnitTestingWorkshopConsoleApp\obj\Debug\netcoreapp2.0\UnitTestingWorkshopConsoleApp.csprojResolveAssemblyReference.cache
