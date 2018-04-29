@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnitTestingWorkshopConsoleApp.Extensions;
 using UnitTestingWorkshopConsoleApp.Models;
 using UnitTestingWorkshopConsoleApp.Services.Interfaces;
 
@@ -8,118 +9,88 @@ namespace UnitTestingWorkshopConsoleApp.Services
 {
     public class HourPartialsGenerator : IHourPartialsGenerator
     {
-        public IEnumerable<Hour24Model> FillAllHours(IEnumerable<int> digits)
+        private readonly IUniqueNumberGenerator _generator;
+
+        public HourPartialsGenerator(IUniqueNumberGenerator generator)
         {
-            var hours = new List<Hour24Model>();
-
-            for (int first = 0; first < 6; first++)
-            {
-                var testDigits = digits.ToList();
-                
-                int firstNo = testDigits[first];
-                testDigits.Remove(firstNo);
-
-                foreach (var secondNo in testDigits)
-                {
-                    var hour = new TimeNoModel() { first = firstNo, second = secondNo };
-
-                    if (ValidateHour(hour))
-                    {
-                        hours.Add(new Hour24Model { hour = hour });
-                    }
-                }
-            }
-
-            return hours;
+            _generator = generator;
         }
 
+        public IEnumerable<Hour24Model> FillAllHours(IEnumerable<int> digits)
+        {
+            return _generator.GenerateUniqueNumbers(digits)
+                .Select(n => {
+                    int firstDigit = n / 10;
+                    int secondDigit = n - firstDigit * 10;
+
+                    return new TimeNoModel { first = firstDigit, second = secondDigit };
+                })
+                .Where(h => ValidateHour(h))
+                .Select(gh => new Hour24Model { hour = gh })
+                .ToList();
+        }
+        public IEnumerable<Hour24Model> FillAllMinutes(IEnumerable<int> digits, IEnumerable<Hour24Model> modelsWithHour)
+        {
+            return FillAllHourPartials(digits, modelsWithHour, (m, v) => m.minutes = v);
+        }
+        private IEnumerable<Hour24Model> FillAllHourPartials(IEnumerable<int> digits, IEnumerable<Hour24Model> modelsWithHour, Action<Hour24Model, TimeNoModel> modelModificator)
+        {
+            var allFilledModels = new List<Hour24Model>();
+
+            foreach (var hour in modelsWithHour)
+            {
+                var allPossibleValues = _generator.GenerateUniqueNumbersExcluding(digits, ExplodeHourModel(hour))
+                    .Select(n => {
+                        int firstDigit = n / 10;
+                        int secondDigit = n - firstDigit * 10;
+
+                        return new TimeNoModel { first = firstDigit, second = secondDigit };
+                    })
+                    .Where(v => ValidateMinSec(v))
+                    .ToList();
+
+                allPossibleValues.ForEach(model =>
+                {
+                    var copy = hour.Copy();
+                    modelModificator(copy, model);
+                    allFilledModels.Add(copy);
+                });
+            }
+
+            return allFilledModels;
+        }
+        public IEnumerable<Hour24Model> FillAllSeconds(IEnumerable<int> digits, IEnumerable<Hour24Model> modelsWitHourAndSeconds)
+        {
+            return FillAllHourPartials(digits, modelsWitHourAndSeconds, (m, v) => m.seconds = v);
+        }
         private static bool ValidateHour(TimeNoModel hour)
         {
             return hour.fullNo >= 0 && hour.fullNo <= 24;
         }
-
-        public IEnumerable<Hour24Model> FillAllMinutes(IEnumerable<int> digits, IEnumerable<Hour24Model> modelsWithHour)
-        {
-            var hoursWithMinutes = new List<Hour24Model>();
-
-            foreach (var hour in modelsWithHour)
-            {
-                var testDigits = digits.ToList();
-                testDigits.Remove(hour.hour.first);
-                testDigits.Remove(hour.hour.second);
-
-                for (int first = 0; first < testDigits.Count(); first++)
-                {
-                    var digitsForNext = testDigits.ToList();
-
-                    int firstNo = digitsForNext[first];
-                    digitsForNext.Remove(firstNo);
-
-                    foreach (var secondNo in digitsForNext)
-                    {
-                        var minute = new TimeNoModel() { first = firstNo, second = secondNo };
-                        var hourcpy = new Hour24Model
-                        {
-                            hour = hour.hour,
-                            minutes = hour.minutes,
-                            seconds = hour.seconds
-                        };
-                        if (ValidateMinSec(minute))
-                        {
-                            hourcpy.minutes = minute;
-                            hoursWithMinutes.Add(hourcpy);
-                        }
-                    }
-                }
-            }
-
-            return hoursWithMinutes;
-        }
-        
         private static bool ValidateMinSec(TimeNoModel hour)
         {
             return hour.fullNo >= 0 && hour.fullNo <= 60;
         }
-
-        public IEnumerable<Hour24Model> FillAllSeconds(IEnumerable<int> digits, IEnumerable<Hour24Model> modelsWithHour)
+        private List<int> ExplodeHourModel(Hour24Model model)
         {
-            var correctHours = new List<Hour24Model>();
+            List<int> exploded = new List<int>();
 
-            foreach (var hour in modelsWithHour)
+            if (model.hour != null)
             {
-                var testDigits = digits.ToList();
-                testDigits.Remove(hour.hour.first);
-                testDigits.Remove(hour.hour.second);
-                testDigits.Remove(hour.minutes.first);
-                testDigits.Remove(hour.minutes.second);
-                
-                for (int first = 0; first < testDigits.Count(); first++)
-                {
-                    var digitsForNext = testDigits.ToList();
-
-                    int firstNo = digitsForNext[first];
-                    digitsForNext.Remove(firstNo);
-
-                    foreach (var secondNo in digitsForNext)
-                    {
-                        var seconds = new TimeNoModel() { first = firstNo, second = secondNo };
-
-                        if (ValidateMinSec(seconds))
-                        {
-                            var hourcpy = new Hour24Model
-                            {
-                                hour = hour.hour,
-                                minutes = hour.minutes,
-                                seconds = hour.seconds
-                            };
-                            hourcpy.seconds = seconds;
-                            correctHours.Add(hourcpy);
-                        }
-                    }
-                }
+                exploded.AddRange(new int[] { model.hour.first, model.hour.second });
             }
 
-            return correctHours;
+            if (model.minutes != null)
+            {
+                exploded.AddRange(new int[] { model.minutes.first, model.minutes.second });
+            }
+
+            if (model.seconds != null)
+            {
+                exploded.AddRange(new int[] { model.seconds.first, model.seconds.second });
+            }
+
+            return exploded;
         }
     }
 }

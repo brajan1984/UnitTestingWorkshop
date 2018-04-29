@@ -47,7 +47,8 @@ namespace UnitTestingWorkshopConsoleApp
         static void Main(string[] args)
         {
             IHourProcessor _hourProcessor = new HourProcessor();
-            IHourPartialsGenerator _hourPartialsGenerator = new HourPartialsGenerator();
+            IUniqueNumberGenerator _numberGenerator = new TwoDigitsUniqueNumberGenerator();
+            IHourPartialsGenerator _hourPartialsGenerator = new HourPartialsGenerator(_numberGenerator);
             IFullHoursGenerator _hoursGenerator = new FullHoursGenerator(_hourPartialsGenerator);
 
             var proc = new Solution(_hourProcessor, _hoursGenerator);

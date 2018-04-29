@@ -13,7 +13,8 @@ namespace UnitTestingWorkshopConsoleAppTests.Services
 
         public FullHoursGenerator_EXPLORATION_Tests()
         {
-            HourPartialsGenerator partialsGenerator = new HourPartialsGenerator();
+            TwoDigitsUniqueNumberGenerator numberGenerator = new TwoDigitsUniqueNumberGenerator();
+            HourPartialsGenerator partialsGenerator = new HourPartialsGenerator(numberGenerator);
             _hoursGenerator = new FullHoursGenerator(partialsGenerator);
         }
         

@@ -11,7 +11,7 @@ namespace UnitTestingWorkshopConsoleApp.Services
         private readonly IHourPartialsGenerator _partialsGenerator;
         public FullHoursGenerator(IHourPartialsGenerator partialsGenerator)
         {
-            _partialsGenerator = partialsGenerator;
+            _partialsGenerator = partialsGenerator; 
         }
         public IEnumerable<Hour24Model> GetAllPossibleHours(IEnumerable<int> digits)
         {
